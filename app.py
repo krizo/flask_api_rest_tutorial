@@ -23,10 +23,10 @@ stores = [
 
 @app.route('/store', methods=['POST'])
 def create_store():
-    payload = request.get_data()
+    payload = request.get_json()
     new_store = {
-        'name': payload['name'],
-        'items': []
+        "name": payload["name"],
+        "items": []
     }
     stores.append(new_store)
     return jsonify(new_store)
@@ -49,11 +49,11 @@ def get_item_in_store(name):
 
 @app.route('/store/<string:name>/item', methods=['POST'])
 def create_item_in_store(name):
-    payload = request.get_data()
+    payload = request.get_json()
     store = get_store_by_name(name)
     new_item = {
-        "name": payload['name'],
-        "price": payload['price']
+        "item": payload["item"],
+        "price": payload["price"]
     }
     if store is not None:
         store['items'].append(new_item)
