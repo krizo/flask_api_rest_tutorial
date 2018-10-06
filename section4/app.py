@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_jwt import JWT, jwt_required
-from section4.security import authenticate, identity
+from security import authenticate, identity
 import os
 
 app = Flask(__name__)
@@ -20,12 +20,11 @@ def find_item(name):
 
 
 class Item(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self, name):
         item = find_item(name)
         return {"item": item}, 200 if item else 404
 
-    @jwt_required
     def post(self, name):
         if find_item(name) is not None:
             return {"message": "An item with name {} already exists".format(name)}, 400
@@ -36,7 +35,7 @@ class Item(Resource):
 
 
 class ItemList(Resource):
-    @jwt_required
+    @jwt_required()
     def get(self):
         return {"items": items}
 

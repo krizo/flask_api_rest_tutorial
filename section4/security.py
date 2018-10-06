@@ -1,5 +1,5 @@
 from werkzeug.security import safe_str_cmp # safe string compare
-from .user import User
+from user import User
 
 users = [
     User(1, 'kriz', 'asdf')
@@ -16,5 +16,5 @@ def authenticate(username, password):
 
 
 def identity(payload):
-    userid = payload.get('identity')
+    userid = payload['identity']
     return userid_table.get(userid, None)
