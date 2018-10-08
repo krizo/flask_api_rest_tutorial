@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 from security import authenticate, identity
 import os
@@ -25,10 +25,14 @@ class Item(Resource):
         item = find_item(name)
         return {"item": item}, 200 if item else 404
 
+    @jwt_required()
     def post(self, name):
         if find_item(name) is not None:
             return {"message": "An item with name {} already exists".format(name)}, 400
-        payload = request.get_json()
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', required=True, type=str, help="name can't be blank!")
+        parser.add_argument('price', required=False, type=float)
+        payload = parser.parse_args()
         item = {"name": name, "price": payload["price"]}
         items.append(item)
         return item, 201
@@ -38,6 +42,22 @@ class Item(Resource):
         global items
         items = list(filter(lambda x: x['name'] != name, items))
         return {"items": items}
+
+    @jwt_required()
+    def put(self, name):
+        parser = reqparse.RequestParser()
+        parser.add_argument('price',
+                            type=float,
+                            required=True,
+                            help='This field cannot be blank!')
+        data = parser.parse_args()
+        item = find_item(name)
+        if item is None:
+            item = {"name": data["name"], "price": data["price"]}
+            items.append(item)
+        else:
+            item.update(data)
+        return item
 
 
 class ItemList(Resource):
