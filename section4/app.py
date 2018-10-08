@@ -20,6 +20,10 @@ def find_item(name):
 
 
 class Item(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('name', required=True, type=str, help="name can't be blank!")
+    parser.add_argument('price', required=False, type=float)
+
     @jwt_required()
     def get(self, name):
         item = find_item(name)
@@ -29,10 +33,8 @@ class Item(Resource):
     def post(self, name):
         if find_item(name) is not None:
             return {"message": "An item with name {} already exists".format(name)}, 400
-        parser = reqparse.RequestParser()
-        parser.add_argument('name', required=True, type=str, help="name can't be blank!")
-        parser.add_argument('price', required=False, type=float)
-        payload = parser.parse_args()
+
+        payload = Item.parser.parse_args()
         item = {"name": name, "price": payload["price"]}
         items.append(item)
         return item, 201
@@ -45,12 +47,7 @@ class Item(Resource):
 
     @jwt_required()
     def put(self, name):
-        parser = reqparse.RequestParser()
-        parser.add_argument('price',
-                            type=float,
-                            required=True,
-                            help='This field cannot be blank!')
-        data = parser.parse_args()
+        data = Item.parser.parse_args()
         item = find_item(name)
         if item is None:
             item = {"name": data["name"], "price": data["price"]}
