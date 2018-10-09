@@ -1,7 +1,8 @@
 import sqlite3
+from flask_restful import Resource, reqparse
 
 
-class User:
+class User(Resource):
     def __init__(self, _id, username, password):
         self.id = _id
         self.username = username
@@ -13,7 +14,7 @@ class User:
         cursor = connection.cursor()
 
         query = "SELECT * FROM users where username=?"
-        result = cursor.execute(query, (username,)) # query arguments always as a tuple
+        result = cursor.execute(query, (username,))  # query arguments always as a tuple
         row = result.fetchone()
         if row:
             user = cls(*row)
@@ -28,7 +29,7 @@ class User:
         cursor = connection.cursor()
 
         query = "SELECT * FROM users where id=?"
-        result = cursor.execute(query, (_id,)) # query arguments always as a tuple
+        result = cursor.execute(query, (_id,))  # query arguments always as a tuple
         row = result.fetchone()
         if row:
             user = cls(*row)
@@ -36,3 +37,30 @@ class User:
             user = None
         connection.close()
         return user
+
+
+class UserRegister(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('username',
+        type=str,
+        required=True,
+        help="Username can't be blank"
+    )
+
+    parser.add_argument('password',
+        type=str,
+        required=True,
+        help="Password can't be blank"
+    )
+
+    def post(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "INSERT INTO users VALUES (NULL, ?, ?)"
+        data = UserRegister.parser.parse_args()
+        cursor.execute(query, (data['username'], data['password']))
+
+        connection.commit()
+        connection.close()
+        return {"message": "User {} created successfully".format(data['username'])}, 201
