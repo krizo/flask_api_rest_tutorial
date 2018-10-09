@@ -1,20 +1,13 @@
 from werkzeug.security import safe_str_cmp # safe string compare
-from user import User
-
-users = [
-    User(1, 'kriz', 'asdf')
-]
-
-username_table = {u.username: u for u in users}
-userid_table= {u.id: u for u in users}
+from section5.user import User
 
 
 def authenticate(username, password):
-    user = username_table.get(username, None)
+    user = User.find_by_username(username)
     if user and safe_str_cmp(user.password, password):
         return user
 
 
 def identity(payload):
     userid = payload['identity']
-    return userid_table.get(userid, None)
+    return User.find_by_id(userid)
