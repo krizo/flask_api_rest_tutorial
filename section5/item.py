@@ -104,6 +104,17 @@ class Item(Resource):
         return updated_item
 
 class ItemList(Resource):
+
     @jwt_required()
     def get(self):
-        return {"items": items}
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "SELECT * FROM items"
+
+        rows = cursor.execute(query)
+        items = [ { "name": row[0], "price": row[1] } for row in rows ]
+
+        connection.commit()
+        connection.close()
+
+        return {"items": items}, 200
