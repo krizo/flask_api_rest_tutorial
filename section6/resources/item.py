@@ -6,6 +6,7 @@ from section6.models.item import ItemModel
 
 
 class Item(Resource):
+
     parser = reqparse.RequestParser()
     parser.add_argument('name', required=True, type=str, help="name can't be blank!")
     parser.add_argument('price', required=False, type=float)

@@ -7,6 +7,7 @@ from section6.resources.item import Item, ItemList
 import os
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 secret_key = os.environ.get('FLASK_TUTORIAL_SECRET')
 app.secret_key = secret_key
 api = Api(app)
@@ -20,4 +21,6 @@ api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
 
 if __name__ == "__main__":
+    from section6.db import db
+    db.init_app(app)
     app.run(port=5000, debug=True)
