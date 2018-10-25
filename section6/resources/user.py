@@ -1,6 +1,5 @@
 import sqlite3
 from flask_restful import Resource, reqparse
-
 from section6.models.user import UserModel
 
 

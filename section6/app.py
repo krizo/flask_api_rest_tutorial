@@ -7,6 +7,7 @@ from section6.resources.item import Item, ItemList
 import os
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 secret_key = os.environ.get('FLASK_TUTORIAL_SECRET')
 app.secret_key = secret_key
