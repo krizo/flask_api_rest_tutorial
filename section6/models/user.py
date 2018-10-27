@@ -1,5 +1,3 @@
-import sqlite3
-from flask_restful import Resource
 from section6.db import db
 
 
