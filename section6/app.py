@@ -13,6 +13,10 @@ secret_key = os.environ.get('FLASK_TUTORIAL_SECRET')
 app.secret_key = secret_key
 api = Api(app)
 
+@app.before_first_request
+def create_tables():
+    db.create_all( )
+
 # create endpoint /auth where you need send username and password:
 jwt = JWT(app, authentication_handler=authenticate, identity_handler=identity)
 
